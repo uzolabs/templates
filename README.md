@@ -2,15 +2,15 @@ This is a learning template. It has not been audited. Use test funds only unless
 
 # Uzo Templates
 
-Clone-and-deploy starter projects for [BOT Chain](https://botchain.ai). Each folder is a complete project with contracts, tests, deploy and verify scripts for both Foundry and Hardhat 3, and a small React frontend. Copy one folder and you have a working app on BOT Chain testnet in about 15 minutes.
+Clone-and-deploy starter projects for [BOT Chain](https://botchain.ai). Each folder is a complete project with a small React frontend. Templates with contracts include tests, deploy and verify scripts for both Foundry and Hardhat 3; templates that use contracts already on chain (such as `dex-integration`) include scripts instead. Copy one folder and you have a working app on BOT Chain testnet in about 15 minutes.
 
 ## Templates
 
 | Template | What you get | Status |
 | --- | --- | --- |
 | [`token`](./token) | ERC-20 with permit and owner minting, plus a transfer and mint UI | Ready |
-| `nft` | NFT collection | Planned |
-| `dex-integration` | Swaps and quotes against BDEX | Planned |
+| [`nft`](./nft) | ERC-721 with on-chain SVG art and metadata, plus a mint page and gallery | Ready |
+| [`dex-integration`](./dex-integration) | Pool lookup, quotes, wrap, swap and add-liquidity scripts for BDEX V2 and V3, plus a swap widget. No contracts. | Ready |
 | `bridge-integration` | Bridging with the BOT bridge | Planned |
 | `gasless-app` | Signature-based (permit) flows | Planned |
 | `ai-agent` | An agent that acts on BOT Chain | Planned |
@@ -29,13 +29,14 @@ Then follow the README inside the folder.
 
 ## What every template includes
 
-- Solidity 0.8.28 (evm `cancun`) with OpenZeppelin 5.
-- The same `contracts/` and `test/` for Foundry and Hardhat 3.
-- `npm run deploy` (Foundry) and `npm run deploy:hardhat` (Ignition). Both print the BOTScan link and the verify command, and write `deployments/<chainId>.json` and `frontend/.env`.
-- `npm run verify` and `npm run verify:hardhat` for BOTScan (a Blockscout explorer, no API key needed).
+- In templates with contracts:
+  - Solidity 0.8.28 (evm `cancun`) with OpenZeppelin 5.
+  - The same `contracts/` and `test/` for Foundry and Hardhat 3.
+  - `npm run deploy` (Foundry) and `npm run deploy:hardhat` (Ignition). Both print the BOTScan link and the verify command, and write `deployments/<chainId>.json` and `frontend/.env`.
+  - `npm run verify` and `npm run verify:hardhat` for BOTScan (a Blockscout explorer, no API key needed).
 - A Vite + React 18 + wagmi v2 frontend that works at 360px wide.
-- Testnet (chain 968) by default. Mainnet (chain 677) needs `--mainnet` plus typing `MAINNET` to confirm.
-- Chain data from [`@uzolabs/sdk`](https://www.npmjs.com/package/@uzolabs/sdk), so nothing is hard-coded.
+- Testnet (chain 968) by default. Anything that sends a transaction on mainnet (chain 677) needs `--mainnet` plus typing `MAINNET` to confirm.
+- Chain data and known contract addresses from [`@uzolabs/sdk`](https://www.npmjs.com/package/@uzolabs/sdk), so nothing is hard-coded.
 
 ## Networks
 

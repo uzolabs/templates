@@ -1,0 +1,19 @@
+{
+  "UzoNFT": {
+    "contract": "UzoNFT",
+    "source": "contracts/UzoNFT.sol:UzoNFT",
+    "address": "0x1f92495A787eD4Eee427602236264a8b0B802547",
+    "chainId": 968,
+    "txHash": "0x8d6b9e00d5ccbc298edb2240652c4c85f4c5c78746948b923e5464a747890812",
+    "deployer": "0xe3e5D9f7eD994A6b5f697e60218a29F3Bf98B485",
+    "constructorArgs": [
+      "Uzo NFT",
+      "UZONFT",
+      "10000000000000000",
+      "1000",
+      "0xe3e5D9f7eD994A6b5f697e60218a29F3Bf98B485"
+    ],
+    "tool": "hardhat",
+    "deployedAt": "2026-10-01T13:40:13.408Z"
+  }
+}

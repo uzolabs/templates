@@ -5,20 +5,23 @@ import { injected } from "wagmi/connectors"
 import { botChain, botChainTestnet } from "@uzolabs/sdk/chains"
 
 /**
- * The chain this app talks to. The deploy script writes VITE_CHAIN_ID to frontend/.env;
+ * The chain this app talks to, from VITE_CHAIN_ID in frontend/.env (the deploy script writes it where there is one);
  * anything other than mainnet's ID means testnet.
  */
 export const targetChain = import.meta.env.VITE_CHAIN_ID === String(botChain.id) ? botChain : botChainTestnet
 
 const rpcOverride = import.meta.env.VITE_RPC_URL || undefined
 
+// Public RPCs sometimes answer 503 or 429 for a few seconds. Retry 5 times with a growing wait, not 3 in about a second.
+const rpc = (url?: string) => http(url, { retryCount: 5, retryDelay: 500 })
+
 export const config = createConfig({
   chains: [botChainTestnet, botChain],
   connectors: [injected()],
   // VITE_RPC_URL (optional) points the target chain at another RPC, for example a local node. Blank uses the public one.
   transports: {
-    [botChainTestnet.id]: http(targetChain.id === botChainTestnet.id ? rpcOverride : undefined),
-    [botChain.id]: http(targetChain.id === botChain.id ? rpcOverride : undefined),
+    [botChainTestnet.id]: rpc(targetChain.id === botChainTestnet.id ? rpcOverride : undefined),
+    [botChain.id]: rpc(targetChain.id === botChain.id ? rpcOverride : undefined),
   },
 })
 

@@ -30,8 +30,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # Add each template here as it lands.
-        template: [token]
+        # Add each template here as it lands. "contracts: false" skips the Foundry and Hardhat steps.
+        include:
+          - template: token
+            contracts: true
+          - template: nft
+            contracts: true
+          - template: dex-integration
+            contracts: false
     defaults:
       run:
         working-directory: ${{ matrix.template }}
@@ -45,18 +51,25 @@ jobs:
             ${{ matrix.template }}/package-lock.json
             ${{ matrix.template }}/frontend/package-lock.json
       - uses: foundry-rs/foundry-toolchain@v1
+        if: matrix.contracts
       - name: Install (also installs frontend/ via postinstall)
         run: npm ci
       - run: npm run typecheck
+      - name: Script tests
+        if: ${{ !matrix.contracts }}
+        run: npm test
       - name: Foundry build and test
+        if: matrix.contracts
         run: |
           forge build
           forge test -vv
       - name: Hardhat build and test
+        if: matrix.contracts
         run: |
           npx hardhat build
           npx hardhat test solidity
       - name: Frontend ABI is up to date
+        if: matrix.contracts
         run: |
           npx tsx scripts/export-abi.ts
           git diff --exit-code -- frontend/src/abi.ts

@@ -1,6 +1,6 @@
 // Shows the state of one transaction: waiting for wallet, pending (with BOTScan link), success or a readable error.
 // Maintainers: this file is copied from _shared/frontend/TxStatus.tsx. Edit it there, then run `npm run sync`.
-import { BaseError } from "viem"
+import { BaseError, ContractFunctionRevertedError } from "viem"
 import { txLink } from "../wagmi"
 
 type Props = {
@@ -15,6 +15,12 @@ type Props = {
 export function readableError(error: Error): string {
   if (error instanceof BaseError) {
     if (error.walk((e) => (e as { code?: number }).code === 4001)) return "You rejected the request in your wallet."
+    // A custom error from the contract, such as SoldOut, says more than "the function reverted".
+    const reverted = error.walk((e) => e instanceof ContractFunctionRevertedError)
+    if (reverted instanceof ContractFunctionRevertedError) {
+      const reason = reverted.data?.errorName ?? reverted.reason
+      if (reason) return `The contract rejected this: ${reason}.`
+    }
     return error.shortMessage
   }
   return error.message.split("\n")[0]!

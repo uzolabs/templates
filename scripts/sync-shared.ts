@@ -8,7 +8,7 @@
 // "# --- <name> template ---" marker line down is kept as the template's own settings.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs"
 import path from "node:path"
-import { listTemplates, ROOT } from "./lib/templates.js"
+import { listTemplates, NO_CONTRACTS, ROOT } from "./lib/templates.js"
 
 /** _shared path -> path inside each template. */
 export const SHARED_FILES: Record<string, string> = {
@@ -30,6 +30,15 @@ export const SHARED_FILES: Record<string, string> = {
   "frontend/tsconfig.json": "frontend/tsconfig.json",
 }
 
+/** Shared files that only make sense in a template with its own contracts. */
+const CONTRACT_FILES = new Set([
+  "foundry.toml",
+  "remappings.txt",
+  "hardhat.config.ts",
+  "scripts/lib/deployments.ts",
+  "scripts/lib/ignition-fees.ts",
+])
+
 const SHARED = path.join(ROOT, "_shared")
 const ENV_BASE = ".env.example.base"
 
@@ -48,7 +57,10 @@ function mergedEnvExample(template: string): string {
 /** Returns the list of files that differ from _shared. Writes them unless `check` is set. */
 export function syncTemplate(template: string, check: boolean): string[] {
   const wanted: Record<string, string> = {}
-  for (const [from, to] of Object.entries(SHARED_FILES)) wanted[to] = read(path.join(SHARED, from))!
+  for (const [from, to] of Object.entries(SHARED_FILES)) {
+    if (NO_CONTRACTS.has(template) && CONTRACT_FILES.has(to)) continue
+    wanted[to] = read(path.join(SHARED, from))!
+  }
   wanted[".env.example"] = mergedEnvExample(template)
 
   const drifted: string[] = []

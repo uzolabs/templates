@@ -67,11 +67,17 @@ export function getPrivateKey(): Hex {
   return key
 }
 
+/**
+ * Public RPCs sometimes answer 503 or 429 for a few seconds. viem retries those itself; this gives it 5 tries with
+ * a growing wait (0.5, 1, 2, 4, 8 seconds, so about 15 in all) instead of the default 3 tries in about a second.
+ */
+const rpc = (url: string) => http(url, { retryCount: 5, retryDelay: 500 })
+
 export function getClients(net: NetworkInfo, key?: Hex) {
-  const publicClient = createPublicClient({ chain: net.chain, transport: http(net.rpcUrl) })
+  const publicClient = createPublicClient({ chain: net.chain, transport: rpc(net.rpcUrl) })
   if (!key) return { publicClient, walletClient: undefined, account: undefined }
   const account = privateKeyToAccount(key)
-  const walletClient = createWalletClient({ account, chain: net.chain, transport: http(net.rpcUrl) })
+  const walletClient = createWalletClient({ account, chain: net.chain, transport: rpc(net.rpcUrl) })
   return { publicClient, walletClient, account }
 }
 
@@ -80,14 +86,15 @@ export function getClients(net: NetworkInfo, key?: Hex) {
  * Catches a mainnet RPC URL pasted into BOT_TESTNET_RPC_URL.
  */
 export async function assertChain(net: NetworkInfo): Promise<void> {
-  const publicClient = createPublicClient({ transport: http(net.rpcUrl) })
+  const publicClient = createPublicClient({ transport: rpc(net.rpcUrl) })
   let actual: number
   try {
     actual = await publicClient.getChainId()
   } catch (error) {
+    const reason = rootCause(error)
     fail(
-      `Could not reach the RPC at ${net.rpcUrl}.`,
-      `Check your internet connection and any RPC override in .env. (${short(error)})`,
+      `Could not reach the RPC at ${net.rpcUrl}${reason ? ` (${reason})` : ""}.`,
+      `Check your internet connection, VPN or firewall, and any RPC override in .env. (${short(error)})`,
     )
   }
   if (actual === botChain.id && !net.isMainnet) {
@@ -133,9 +140,34 @@ export async function assertHasGas(net: NetworkInfo, address: Hex): Promise<bigi
   return balance
 }
 
+/** The innermost cause of a network error, such as ENOTFOUND or "certificate has expired". */
+function rootCause(error: unknown): string | undefined {
+  let current = error
+  while (current instanceof Error && current.cause instanceof Error) current = current.cause
+  if (current === error || !(current instanceof Error)) return undefined
+  const code = "code" in current && typeof current.code === "string" ? current.code : undefined
+  return code && !current.message.includes(code) ? `${code}: ${current.message}` : current.message
+}
+
+/** The HTTP status of a failed RPC request (such as 503), wherever it sits in the error's cause chain. */
+function httpStatus(error: unknown): number | undefined {
+  for (let current = error; current instanceof Error; current = current.cause) {
+    if ("status" in current && typeof current.status === "number") return current.status
+  }
+  return undefined
+}
+
 export function short(error: unknown): string {
-  if (error && typeof error === "object" && "shortMessage" in error) return String(error.shortMessage)
-  return error instanceof Error ? error.message : String(error)
+  const message =
+    error && typeof error === "object" && "shortMessage" in error
+      ? String(error.shortMessage)
+      : error instanceof Error
+        ? error.message
+        : String(error)
+  const status = httpStatus(error)
+  return status
+    ? `${message} The RPC answered HTTP ${status}, usually a short outage, so try again in a minute.`
+    : message
 }
 
 /** Thrown by fail(). Caught below so the user sees the message and hint, not a stack trace. */

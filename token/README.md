@@ -148,7 +148,7 @@ deployments/<chainId>.json    written by deploy (addresses and constructor args)
 
 **Network settings.** Chain IDs, RPC URLs and explorer URLs come from `@uzolabs/sdk/chains`, not from this code. You can point at a different RPC with `BOT_TESTNET_RPC_URL` or `BOT_MAINNET_RPC_URL` in `.env`.
 
-**The web app.** `frontend/src/wagmi.ts` sets up wagmi with the injected (browser wallet) connector. `App.tsx` reads the token's name, symbol, total supply, owner and your balance in one batched call, and polls every 10 seconds. It does not subscribe to events, because BOT Chain RPCs do not serve `eth_getLogs`. Each transaction shows "confirm in wallet", then "pending" with a BOTScan link, then "confirmed" or a readable error. Status lines sit in an `aria-live` region so screen readers announce them.
+**The web app.** `frontend/src/wagmi.ts` sets up wagmi with the injected (browser wallet) connector. If you have more than one wallet extension, "Connect wallet" lists them by name (EIP-6963) so you choose which one to use. `App.tsx` reads the token's name, symbol, total supply, owner and your balance in one batched call, and polls every 10 seconds. It does not subscribe to events, because BOT Chain RPCs do not serve `eth_getLogs`. Each transaction shows "confirm in wallet", then "pending" with a BOTScan link, then "confirmed" or a readable error. Status lines sit in an `aria-live` region so screen readers announce them.
 
 **The look.** `frontend/src/theme.css` holds the Uzo Labs design: a dark palette, glass cards, pill buttons and two slow background glows (turned off if you prefer reduced motion). It is plain CSS, so there is no styling dependency. The colour variables use shadcn/ui names, so they carry over if you move to Tailwind. Fonts load from Fontshare (Satoshi) and Google Fonts (Reggae One, JetBrains Mono); without a connection the system fonts are used. `frontend/src/styles.css` is for styles that belong to this app only.
 
@@ -190,13 +190,15 @@ You can also set `MAINNET=true` in `.env`. Either way the script shows a warning
 
 **Wrong network.** If the web app shows "Switch to BOT Chain Testnet", click it and approve in your wallet. If your wallet does not know the network, it will offer to add it. For scripts, the error says which chain the RPC reported. Check `BOT_TESTNET_RPC_URL` in `.env`, or leave it blank to use the default.
 
+**"Could not reach the RPC" or "HTTP request failed".** The public RPC sometimes answers 503 (busy) for a minute or so. The scripts retry for about 15 seconds first, and the error says when the RPC answered with an HTTP status. Wait a minute and run the same command again. If it keeps failing while the [explorer](https://scan.bohr.life) loads fine, check your VPN, firewall or proxy, and `BOT_TESTNET_RPC_URL` in `.env` (blank uses the default).
+
 **USDT has 6 decimals.** This token has 18 decimals, but USDT on BOT Chain has 6. If you adapt these scripts or the UI for USDT, read `decimals()` and use `parseUnits(amount, decimals)`, never `parseEther`. Otherwise amounts are off by a factor of 10^12.
 
 **Verification fails right after deploying.** The explorer needs time to index a new contract. Wait a minute and run `npm run verify` again. It is safe to run more than once. If it says the contract is already verified, you are done.
 
 **`eth_getLogs` is disabled.** BOT Chain's public RPCs do not serve event logs, so `getLogs`, `getContractEvents` and wagmi's `useWatchContractEvent` will not work. This template polls reads (for example `balanceOf`) instead. For transaction history, link to BOTScan.
 
-**`forge: command not found`.** Install Foundry, then open a new terminal. On Windows, check that `~/.foundry/bin` is on your PATH. In PowerShell you can add it for the current window with `$env:Path += ";$env:USERPROFILE\.foundryin"`. Run `npm` commands from the `token` folder, not from the Foundry folder.
+**`forge: command not found`.** Install Foundry, then open a new terminal. On Windows, check that `~/.foundry/bin` is on your PATH. In PowerShell you can add it for the current window with `$env:Path += ";$env:USERPROFILE\.foundry\bin"`. Run `npm` commands from the `token` folder, not from the Foundry folder.
 
 **"PRIVATE_KEY is not set".** Run `cp .env.example .env` and paste your test wallet key after `PRIVATE_KEY=`.
 

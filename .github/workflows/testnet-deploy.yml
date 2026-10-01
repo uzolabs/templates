@@ -1,4 +1,5 @@
-# Nightly smoke test: deploy and verify every template on BOT Chain TESTNET with both toolchains.
+# Nightly smoke test on BOT Chain TESTNET: deploy and verify every template that has contracts with both
+# toolchains, then run one scripted interaction. Templates without contracts run their interaction only.
 # Uses the TESTNET_DEPLOYER_KEY repository secret (a throwaway testnet-only key).
 # This workflow never targets mainnet: MAINNET is forced to false and --mainnet is never passed.
 name: Testnet deploy
@@ -24,7 +25,13 @@ jobs:
       fail-fast: false
       max-parallel: 1
       matrix:
-        template: [token]
+        include:
+          - template: token
+            contracts: true
+          - template: nft
+            contracts: true
+          - template: dex-integration
+            contracts: false
     defaults:
       run:
         working-directory: ${{ matrix.template }}
@@ -43,6 +50,7 @@ jobs:
             ${{ matrix.template }}/package-lock.json
             ${{ matrix.template }}/frontend/package-lock.json
       - uses: foundry-rs/foundry-toolchain@v1
+        if: matrix.contracts
       - run: npm ci
 
       - name: Check deployer balance
@@ -69,15 +77,26 @@ jobs:
           '
 
       - name: Deploy with Foundry
-        if: steps.balance.outputs.ok == 'true'
+        if: steps.balance.outputs.ok == 'true' && matrix.contracts
         run: npm run deploy
       - name: Verify with Foundry
-        if: steps.balance.outputs.ok == 'true'
+        if: steps.balance.outputs.ok == 'true' && matrix.contracts
         run: npm run verify
 
       - name: Deploy with Hardhat Ignition
-        if: steps.balance.outputs.ok == 'true'
+        if: steps.balance.outputs.ok == 'true' && matrix.contracts
         run: npm run deploy:hardhat
       - name: Verify with Hardhat
-        if: steps.balance.outputs.ok == 'true'
+        if: steps.balance.outputs.ok == 'true' && matrix.contracts
         run: npm run verify:hardhat
+
+      # One scripted interaction per template, against what was just deployed (or the live pools).
+      - name: Mint one NFT
+        if: steps.balance.outputs.ok == 'true' && matrix.template == 'nft'
+        run: npm run mint
+      - name: Quote and swap 0.01 tBOT for USDT on BDEX
+        if: steps.balance.outputs.ok == 'true' && matrix.template == 'dex-integration'
+        run: |
+          npm run find-pools
+          npm run quote -- 0.01 BOT USDT
+          npm run swap-v2 -- 0.01 BOT USDT

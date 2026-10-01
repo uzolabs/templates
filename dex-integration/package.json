@@ -1,0 +1,32 @@
+{
+  "name": "uzo-template-dex-integration",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "BOT Chain starter: find pools, quote, wrap and swap on BDEX V2 and V3 from scripts and a swap widget.",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20.19"
+  },
+  "scripts": {
+    "test": "tsx --test scripts/lib/*.test.ts",
+    "find-pools": "tsx scripts/find-pools.ts",
+    "quote": "tsx scripts/quote.ts",
+    "wrap": "tsx scripts/wrap.ts",
+    "swap-v2": "tsx scripts/swap-v2.ts",
+    "swap-v3": "tsx scripts/swap-v3.ts",
+    "add-liquidity-v2": "tsx scripts/add-liquidity-v2.ts",
+    "frontend": "npm --prefix frontend run dev",
+    "postinstall": "npm --prefix frontend install --no-audit --no-fund",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@uzolabs/sdk": "^0.2.0",
+    "viem": "^2.47.6"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3"
+  }
+}

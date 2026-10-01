@@ -1,0 +1,55 @@
+/* NFT template styles. The shared look (colours, cards, buttons, inputs) lives in theme.css. */
+
+.amount {
+  font-family: var(--font-mono);
+  font-size: clamp(1.75rem, 7vw, 2.25rem);
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.amount .muted {
+  font-size: 0.6em;
+}
+
+.gallery {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.75rem;
+}
+
+.nft {
+  margin: 0;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  background: var(--glass);
+  overflow: hidden;
+}
+
+.nft img,
+.nft-missing {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+}
+
+.nft-missing {
+  display: grid;
+  place-items: center;
+  color: var(--muted-foreground);
+}
+
+.card .nft p {
+  margin: 0;
+  padding: 0.5rem 0.625rem;
+  font-size: 0.8125rem;
+}
+
+@media (max-width: 420px) {
+  .gallery {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

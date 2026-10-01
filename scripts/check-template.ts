@@ -9,7 +9,7 @@
 import { execFileSync } from "node:child_process"
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs"
 import path from "node:path"
-import { listTemplates, ROOT } from "./lib/templates.js"
+import { listTemplates, NO_CONTRACTS, ROOT } from "./lib/templates.js"
 import { syncTemplate } from "./sync-shared.js"
 
 const DISCLAIMER =
@@ -27,6 +27,8 @@ const SECTIONS = [
   "Resources",
 ]
 const REQUIRED_SCRIPTS = ["test", "test:hardhat", "deploy", "deploy:hardhat", "verify", "frontend"]
+/** Templates without contracts of their own (see NO_CONTRACTS) only need these. */
+const REQUIRED_SCRIPTS_NO_CONTRACTS = ["test", "frontend"]
 
 const SKIP_DIRS = new Set(["node_modules", "out", "cache", "artifacts", "broadcast", "dist", "deployments", ".git"])
 const SOURCE_EXT = new Set([".ts", ".tsx", ".sol", ".html", ".css", ".json", ".md", ".toml", ".yml", ".txt"])
@@ -86,7 +88,7 @@ function checkTemplate(template: string): string[] {
 
   // package.json scripts
   const pkg = JSON.parse(readFileSync(path.join(dir, "package.json"), "utf8"))
-  for (const script of REQUIRED_SCRIPTS) {
+  for (const script of NO_CONTRACTS.has(template) ? REQUIRED_SCRIPTS_NO_CONTRACTS : REQUIRED_SCRIPTS) {
     if (!pkg.scripts?.[script]) problems.push(`package.json is missing the "${script}" script`)
   }
   if (!existsSync(path.join(dir, ".env.example"))) problems.push(".env.example is missing")

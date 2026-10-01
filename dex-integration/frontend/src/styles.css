@@ -1,0 +1,225 @@
+/* Swap widget styles. The shared look (colours, cards, buttons, inputs) lives in theme.css. */
+
+.small {
+  font-size: 0.8125rem;
+}
+
+.card p.small {
+  margin: 0;
+}
+
+.swap-side {
+  display: grid;
+  gap: 6px;
+}
+
+/* Amount and token picker sit in one pill-shaped row. */
+.swap-input {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.swap-input input,
+.swap-out {
+  flex: 1;
+  min-width: 0;
+  font-size: 1.125rem;
+}
+
+.swap-out {
+  display: flex;
+  align-items: center;
+  height: 48px;
+  padding: 0 20px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  background: var(--secondary);
+  border: 1px solid var(--glass-border);
+  border-radius: 999px;
+}
+
+.token-select {
+  flex: none;
+  height: 48px;
+  padding: 0 14px;
+  font: inherit;
+  font-weight: 500;
+  color: var(--foreground);
+  background: var(--input);
+  border: 1px solid var(--glass-border);
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.token-select:focus-visible {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(217, 164, 65, 0.5);
+}
+
+.token-select option {
+  color: var(--foreground);
+  background: var(--card);
+}
+
+.flip {
+  justify-self: center;
+  width: 40px;
+  padding: 0;
+}
+
+.routes ul {
+  list-style: none;
+  margin: 0 0 6px;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.routes li {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 4px 12px;
+  padding: 8px 12px;
+  font-size: 0.875rem;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+}
+
+.routes li.best {
+  border-color: var(--primary);
+  background: rgba(217, 164, 65, 0.08);
+}
+
+.routes li.best span:first-child::after {
+  content: " (best)";
+  color: var(--primary);
+}
+
+.slippage {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.slippage legend {
+  padding: 0;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.slippage-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.slippage-row button {
+  height: 40px;
+  padding: 0 14px;
+}
+
+.slippage-row input {
+  flex: 1;
+  min-width: 80px;
+  height: 40px;
+}
+
+input[aria-invalid="true"] {
+  border-color: var(--destructive);
+}
+
+/* Result window. A native <dialog> opened with showModal(), so focus, Escape and the backdrop come for free. */
+.result {
+  width: min(440px, calc(100vw - 32px));
+  margin: auto;
+  color: var(--foreground);
+  background-color: var(--card);
+}
+
+.result::backdrop {
+  background: rgba(11, 10, 9, 0.7);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+}
+
+.result-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.result-head h2 {
+  margin: 0;
+}
+
+.result-icon {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 36px;
+  height: 36px;
+  font-weight: 700;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+}
+
+.is-success .result-icon {
+  color: var(--success-text);
+}
+
+.is-error .result-icon,
+.is-error .result-reason {
+  color: var(--error-text);
+}
+
+.is-unknown .result-icon {
+  color: var(--primary);
+}
+
+.result-body {
+  display: grid;
+  gap: 10px;
+}
+
+.result-reason {
+  font-weight: 500;
+}
+
+/* One bordered row per item, overriding theme.css's two-column dl. */
+.result-list {
+  grid-template-columns: 1fr;
+  gap: 6px;
+}
+
+.result-list div {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 4px 12px;
+  padding: 8px 12px;
+  font-size: 0.875rem;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+}
+
+.result-list dt {
+  color: var(--muted-foreground);
+}
+
+.result-list dd {
+  margin: 0;
+}
+
+.result-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+}

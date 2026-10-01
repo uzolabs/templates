@@ -385,6 +385,38 @@ code {
   text-align: right;
 }
 
+/* "Connect wallet" list, shown when more than one wallet extension is installed. */
+.wallet-picker {
+  position: relative;
+}
+
+.wallet-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 10;
+  display: grid;
+  gap: 6px;
+  min-width: 100%;
+  margin: 0;
+  padding: 8px;
+  list-style: none;
+  border-radius: calc(var(--radius) * 1.4);
+  background-color: var(--card);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.6);
+}
+
+.wallet-menu button {
+  width: 100%;
+  justify-content: flex-start;
+  white-space: nowrap;
+}
+
+.wallet-menu img {
+  border-radius: 4px;
+}
+
 .chip {
   display: inline-flex;
   align-items: center;

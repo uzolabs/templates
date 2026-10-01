@@ -1,0 +1,33 @@
+# Secrets
+.env
+.env.*
+!.env.example
+frontend/.env
+*.pem
+
+# Dependencies
+node_modules/
+
+# Foundry
+out/
+cache/
+broadcast/
+
+# Hardhat
+artifacts/
+ignition/deployments/
+ignition/parameters.local.json
+
+# Frontend
+frontend/dist/
+*.tsbuildinfo
+
+# Local agent settings
+.claude/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
