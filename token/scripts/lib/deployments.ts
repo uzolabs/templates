@@ -108,6 +108,8 @@ export function printDeploySummary(net: NetworkInfo, record: DeploymentRecord, v
   if (record.txHash) console.log(`  Tx:       ${txUrl(net, record.txHash)}`)
   console.log(`  Saved to: deployments/${record.chainId}.json and frontend/.env`)
   console.log("")
+  // Templates that deploy several contracts pass the command with the last one only, so it prints once.
+  if (!verifyCommand) return
   console.log("Verify the source code on BOTScan (wait about a minute for the explorer to index it first):")
   console.log(`  ${verifyCommand}`)
   console.log("")

@@ -12,7 +12,7 @@ Clone-and-deploy starter projects for [BOT Chain](https://botchain.ai). Each fol
 | [`nft`](./nft) | ERC-721 with on-chain SVG art and metadata, plus a mint page and gallery | Ready |
 | [`dex-integration`](./dex-integration) | Pool lookup, quotes, wrap, swap and add-liquidity scripts for BDEX V2 and V3, plus a swap widget. No contracts. | Ready |
 | `bridge-integration` | Bridging with the BOT bridge | Planned |
-| `gasless-app` | Signature-based (permit) flows | Planned |
+| [`gasless-app`](./gasless-app) | Guest book that wallets with 0 BOT sign for free: ERC-2771 forwarder, a rate-limited relayer, and a web app | Ready |
 | `ai-agent` | An agent that acts on BOT Chain | Planned |
 
 "In progress" means the code, tests and CI pass, but the live testnet deploy and verification are not recorded yet. A template moves to "Ready" only after that.

@@ -38,6 +38,8 @@ jobs:
             contracts: true
           - template: dex-integration
             contracts: false
+          - template: gasless-app
+            contracts: true
     defaults:
       run:
         working-directory: ${{ matrix.template }}
@@ -55,6 +57,9 @@ jobs:
       - name: Install (also installs frontend/ via postinstall)
         run: npm ci
       - run: npm run typecheck
+      - name: Relayer unit tests
+        if: matrix.template == 'gasless-app'
+        run: npm run test:relayer
       - name: Script tests
         if: ${{ !matrix.contracts }}
         run: npm test

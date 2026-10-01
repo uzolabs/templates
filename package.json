@@ -12,8 +12,8 @@
     "sync:check": "tsx scripts/sync-shared.ts --check",
     "check": "tsx scripts/check-template.ts",
     "typecheck": "tsc --noEmit",
-    "format": "prettier --write \"scripts/**/*.ts\" \"_shared/**/*.{ts,tsx,css}\" \"token/**/*.{ts,tsx,css}\" \"nft/**/*.{ts,tsx,css}\" \"dex-integration/**/*.{ts,tsx,css}\"",
-    "format:check": "prettier --check \"scripts/**/*.ts\" \"_shared/**/*.{ts,tsx,css}\" \"token/**/*.{ts,tsx,css}\" \"nft/**/*.{ts,tsx,css}\" \"dex-integration/**/*.{ts,tsx,css}\""
+    "format": "prettier --write \"scripts/**/*.ts\" \"_shared/**/*.{ts,tsx,css}\" \"token/**/*.{ts,tsx,css}\" \"nft/**/*.{ts,tsx,css}\" \"dex-integration/**/*.{ts,tsx,css}\" \"gasless-app/**/*.{ts,tsx,css}\"",
+    "format:check": "prettier --check \"scripts/**/*.ts\" \"_shared/**/*.{ts,tsx,css}\" \"token/**/*.{ts,tsx,css}\" \"nft/**/*.{ts,tsx,css}\" \"dex-integration/**/*.{ts,tsx,css}\" \"gasless-app/**/*.{ts,tsx,css}\""
   },
   "devDependencies": {
     "@types/node": "^22.10.0",

@@ -1,0 +1,26 @@
+{
+  "UzoForwarder": {
+    "contract": "UzoForwarder",
+    "source": "contracts/UzoForwarder.sol:UzoForwarder",
+    "address": "0x9bAb837f41759c737Cb2cC00Ec5D88d5fAcF74C1",
+    "constructorArgs": [],
+    "txHash": "0x9691b25ddc9d021daaae271f9e8134206aa247177bd2c13a801af84451662d44",
+    "chainId": 968,
+    "deployer": "0xe3e5D9f7eD994A6b5f697e60218a29F3Bf98B485",
+    "tool": "hardhat",
+    "deployedAt": "2026-10-01T22:40:05.540Z"
+  },
+  "GuestBook": {
+    "contract": "GuestBook",
+    "source": "contracts/GuestBook.sol:GuestBook",
+    "address": "0x7962412A92E5553E66C794c3a352422DEB7BAc27",
+    "constructorArgs": [
+      "0x9bAb837f41759c737Cb2cC00Ec5D88d5fAcF74C1"
+    ],
+    "txHash": "0xf6211b6ab3c6dc0afab431dd9cadde9af6d73bb12672458906fd0666698bfbab",
+    "chainId": 968,
+    "deployer": "0xe3e5D9f7eD994A6b5f697e60218a29F3Bf98B485",
+    "tool": "hardhat",
+    "deployedAt": "2026-10-01T22:40:05.542Z"
+  }
+}

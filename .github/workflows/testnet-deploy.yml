@@ -32,6 +32,8 @@ jobs:
             contracts: true
           - template: dex-integration
             contracts: false
+          - template: gasless-app
+            contracts: true
     defaults:
       run:
         working-directory: ${{ matrix.template }}
@@ -100,3 +102,13 @@ jobs:
           npm run find-pools
           npm run quote -- 0.01 BOT USDT
           npm run swap-v2 -- 0.01 BOT USDT
+      - name: Sign the guest book from a wallet with 0 tBOT, through the relayer
+        if: steps.balance.outputs.ok == 'true' && matrix.template == 'gasless-app'
+        env:
+          # CI reuses the throwaway deployer key for the relayer. Locally, use a separate relayer wallet.
+          RELAYER_PRIVATE_KEY: ${{ secrets.TESTNET_DEPLOYER_KEY }}
+        run: |
+          npm run relayer > relayer.log 2>&1 &
+          for i in $(seq 1 30); do curl -sf http://localhost:8787/health > /dev/null && break; sleep 1; done
+          npm run sign -- "nightly check from CI" || (cat relayer.log; exit 1)
+          cat relayer.log

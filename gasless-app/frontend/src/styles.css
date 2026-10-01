@@ -1,0 +1,42 @@
+/* Gasless app styles. The shared look (colours, cards, buttons, inputs) lives in theme.css. */
+
+.sign-form {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.card .sign-form p {
+  margin: 0 0 0.5rem;
+  font-size: 0.8125rem;
+  text-align: right;
+}
+
+.entries {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.625rem;
+}
+
+.entry {
+  padding: 0.75rem 0.875rem;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  background: var(--glass);
+}
+
+.entry.mine {
+  border-color: var(--primary);
+}
+
+.card .entry-message {
+  margin: 0 0 0.25rem;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.card .entry-meta {
+  margin: 0;
+  font-size: 0.8125rem;
+}
