@@ -1,0 +1,425 @@
+/*
+ * Uzo Labs look for template frontends: the Uli palette, glass panels and two soft glows.
+ * Maintainers: this file is copied from _shared/frontend/theme.css. Edit it there, then run `npm run sync`.
+ *
+ * Plain CSS on purpose, so a template needs no styling dependencies. The variable names match
+ * shadcn/ui, so the same tokens drop into a Tailwind setup if you move to one.
+ * Make it yours: change the colours in :root and the fonts in the @import lines.
+ */
+
+/* Satoshi from Fontshare, Reggae One and JetBrains Mono from Google Fonts. Offline, the system fonts take over. */
+@import url("https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Reggae+One&display=swap");
+
+/*
+ * Uli palette. Dark only.
+ * uli black, nzu white chalk, edo ochre, ufie camwood red.
+ */
+:root {
+  --background: #0b0a09;
+  --foreground: #f5f1ea;
+  --card: #141210;
+  --primary: #d9a441;
+  --primary-foreground: #0b0a09;
+  --secondary: rgba(245, 241, 234, 0.08);
+  --muted-foreground: #a8a095;
+  --accent: #b23a2a;
+  --destructive: #e0674f;
+  --error-text: #e8a08c;
+  --success-text: #9fd3a3;
+  --border: rgba(245, 241, 234, 0.12);
+  --input: #100e0ccc;
+  --ring: #d9a441;
+  --radius: 0.625rem;
+
+  --glass: rgba(245, 241, 234, 0.06);
+  --glass-border: rgba(245, 241, 234, 0.12);
+  --glass-blur: 24px;
+
+  --font-sans: "Satoshi", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Reggae One", "Satoshi", serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  color-scheme: dark;
+}
+
+@media (max-width: 640px) {
+  :root {
+    --glass-blur: 12px;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: var(--font-sans);
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: var(--background);
+  color: var(--foreground);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+/* Fixed backdrop: ochre and camwood glows drifting slowly. Gradients, not blur filters, so it is cheap. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: -20%;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(closest-side at 70% 10%, rgba(217, 164, 65, 0.16), transparent),
+    radial-gradient(closest-side at 10% 65%, rgba(178, 58, 42, 0.14), transparent),
+    radial-gradient(closest-side at 90% 100%, rgba(217, 164, 65, 0.08), transparent);
+  animation: glow-drift 40s ease-in-out infinite;
+}
+
+@keyframes glow-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(3%, -2%, 0) scale(1.06);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::before {
+    animation: none;
+  }
+}
+
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+}
+
+::selection {
+  background: rgba(217, 164, 65, 0.35);
+  color: var(--foreground);
+}
+
+/* Layout */
+
+.page {
+  max-width: 44rem;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+}
+
+.topbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.hero {
+  padding: 40px 0 28px;
+}
+
+/* Small uppercase label above a heading. */
+.eyebrow {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--primary);
+}
+
+h1,
+h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: 1.12;
+  text-wrap: balance;
+}
+
+h1 {
+  margin-top: 12px;
+  font-size: clamp(2.25rem, 8vw, 3.25rem);
+  letter-spacing: -0.01em;
+}
+
+h2 {
+  font-size: 1.5rem;
+}
+
+.lede {
+  margin: 16px 0 0;
+  max-width: 36rem;
+  font-size: 1.125rem;
+  color: var(--muted-foreground);
+}
+
+.stack {
+  display: grid;
+  gap: 16px;
+}
+
+/* Glass panel: fill, 1px border, soft top highlight, soft shadow. */
+.card {
+  display: grid;
+  gap: 16px;
+  padding: 20px;
+  border-radius: calc(var(--radius) * 1.8);
+  background-color: var(--glass);
+  border: 1px solid var(--glass-border);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(140%);
+  backdrop-filter: blur(var(--glass-blur)) saturate(140%);
+  box-shadow:
+    inset 0 1px 0 0 rgba(245, 241, 234, 0.1),
+    0 12px 40px -16px rgba(0, 0, 0, 0.7);
+}
+
+.card p {
+  margin: 0;
+}
+
+.footer {
+  display: grid;
+  gap: 4px;
+  margin-top: 48px;
+  padding-top: 20px;
+  border-top: 1px solid var(--glass-border);
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+}
+
+.footer p {
+  margin: 0;
+}
+
+/* Key and value list, stacked on narrow screens. */
+dl {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 8px 16px;
+  margin: 0;
+}
+
+dt {
+  color: var(--muted-foreground);
+}
+
+dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 420px) {
+  dl {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+  dd + dt {
+    margin-top: 10px;
+  }
+}
+
+/* Forms */
+
+form {
+  display: grid;
+  gap: 14px;
+}
+
+label {
+  display: grid;
+  gap: 6px;
+  font-weight: 500;
+}
+
+input {
+  width: 100%;
+  min-width: 0;
+  height: 48px;
+  padding: 0 20px;
+  font: inherit;
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  color: var(--foreground);
+  background: var(--input);
+  border: 1px solid var(--glass-border);
+  border-radius: 999px;
+  outline: none;
+}
+
+input::placeholder {
+  color: rgba(168, 160, 149, 0.7);
+}
+
+input:focus-visible {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(217, 164, 65, 0.5);
+}
+
+/* Buttons: an ochre pill for the main action, a quiet pill for the rest. */
+button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 48px;
+  padding: 0 28px;
+  font: inherit;
+  font-weight: 500;
+  color: var(--primary-foreground);
+  background: var(--primary);
+  border: 1px solid transparent;
+  border-radius: 999px;
+  white-space: nowrap;
+  transition:
+    box-shadow 0.2s,
+    background-color 0.2s,
+    transform 0.1s;
+}
+
+button:not(:disabled) {
+  cursor: pointer;
+}
+
+button:not(:disabled):hover {
+  box-shadow: 0 0 32px -4px rgba(217, 164, 65, 0.55);
+}
+
+button:not(:disabled):active {
+  transform: translateY(1px);
+}
+
+button:disabled {
+  opacity: 0.5;
+}
+
+button.secondary {
+  height: 40px;
+  padding: 0 18px;
+  color: var(--foreground);
+  background: var(--secondary);
+  border-color: var(--glass-border);
+}
+
+button.secondary:not(:disabled):hover {
+  box-shadow: none;
+  background: rgba(245, 241, 234, 0.12);
+}
+
+/* Text */
+
+a {
+  color: var(--primary);
+  text-underline-offset: 4px;
+  border-radius: 2px;
+}
+
+/* External links get a small arrow, hidden from screen readers. */
+a[target="_blank"]::after {
+  content: "\2197" / "";
+  margin-left: 2px;
+  font-size: 0.85em;
+}
+
+code,
+.mono {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  overflow-wrap: anywhere;
+}
+
+code {
+  padding: 1px 6px;
+  border-radius: 6px;
+  background: var(--secondary);
+}
+
+.muted {
+  color: var(--muted-foreground);
+}
+
+.error {
+  margin: 0;
+  color: var(--error-text);
+  overflow-wrap: anywhere;
+}
+
+.success {
+  margin: 0;
+  color: var(--success-text);
+}
+
+/* Live region for transaction and form status. Keeps its height so the layout does not jump. */
+.status {
+  min-height: 1.6em;
+}
+
+.status p {
+  margin: 0;
+}
+
+/* Wallet controls */
+
+.wallet {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.wallet .error {
+  flex-basis: 100%;
+  text-align: right;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 16px;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  border-radius: 999px;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  color: var(--foreground);
+  text-decoration: none;
+}
+
+.chip::after {
+  display: none;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 10px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border-radius: 999px;
+  color: var(--primary);
+  background: rgba(217, 164, 65, 0.15);
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  align-items: center;
+  justify-content: space-between;
+}

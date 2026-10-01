@@ -1,0 +1,14 @@
+# Foundry config shared by every Uzo template.
+# Maintainers: this file is copied from _shared/foundry.toml. Edit it there, then run `npm run sync`.
+[profile.default]
+src = "contracts"
+test = "test"
+script = "script"
+out = "out"
+libs = ["node_modules"]
+solc_version = "0.8.28"
+evm_version = "cancun"
+optimizer = true
+optimizer_runs = 200
+
+# No [rpc_endpoints] here: RPC URLs come from @uzolabs/sdk (or BOT_*_RPC_URL in .env) and are passed with --rpc-url.

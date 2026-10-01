@@ -1,0 +1,12 @@
+/* Token template styles. The shared look (colours, cards, buttons, inputs) lives in theme.css. */
+
+.amount {
+  font-family: var(--font-mono);
+  font-size: clamp(1.75rem, 7vw, 2.25rem);
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.amount .muted {
+  font-size: 0.6em;
+}

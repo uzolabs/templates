@@ -1,0 +1,83 @@
+# Nightly smoke test: deploy and verify every template on BOT Chain TESTNET with both toolchains.
+# Uses the TESTNET_DEPLOYER_KEY repository secret (a throwaway testnet-only key).
+# This workflow never targets mainnet: MAINNET is forced to false and --mainnet is never passed.
+name: Testnet deploy
+
+on:
+  schedule:
+    - cron: "17 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  # One run at a time so nonces from the shared deployer key do not collide.
+  group: testnet-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: ${{ matrix.template }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        template: [token]
+    defaults:
+      run:
+        working-directory: ${{ matrix.template }}
+    env:
+      PRIVATE_KEY: ${{ secrets.TESTNET_DEPLOYER_KEY }}
+      MAINNET: "false"
+      # Minimum balance in tBOT before we try. Skips (does not fail) when the wallet is low.
+      MIN_BALANCE: "0.5"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            ${{ matrix.template }}/package-lock.json
+            ${{ matrix.template }}/frontend/package-lock.json
+      - uses: foundry-rs/foundry-toolchain@v1
+      - run: npm ci
+
+      - name: Check deployer balance
+        id: balance
+        run: |
+          if [ -z "$PRIVATE_KEY" ]; then
+            echo "TESTNET_DEPLOYER_KEY is not set. Skipping."
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          node --input-type=module -e '
+            import { createPublicClient, http, formatEther, parseEther } from "viem";
+            import { privateKeyToAccount } from "viem/accounts";
+            import { botChainTestnet } from "@uzolabs/sdk/chains";
+            import { appendFileSync } from "node:fs";
+            const raw = process.env.PRIVATE_KEY.trim();
+            const account = privateKeyToAccount(raw.startsWith("0x") ? raw : `0x${raw}`);
+            const client = createPublicClient({ chain: botChainTestnet, transport: http() });
+            const balance = await client.getBalance({ address: account.address });
+            const ok = balance >= parseEther(process.env.MIN_BALANCE);
+            console.log(`${account.address} has ${formatEther(balance)} tBOT`);
+            if (!ok) console.log(`::warning::Deployer balance is below ${process.env.MIN_BALANCE} tBOT. Top it up at https://faucet.botchain.ai/basic`);
+            appendFileSync(process.env.GITHUB_OUTPUT, `ok=${ok}\n`);
+          '
+
+      - name: Deploy with Foundry
+        if: steps.balance.outputs.ok == 'true'
+        run: npm run deploy
+      - name: Verify with Foundry
+        if: steps.balance.outputs.ok == 'true'
+        run: npm run verify
+
+      - name: Deploy with Hardhat Ignition
+        if: steps.balance.outputs.ok == 'true'
+        run: npm run deploy:hardhat
+      - name: Verify with Hardhat
+        if: steps.balance.outputs.ok == 'true'
+        run: npm run verify:hardhat

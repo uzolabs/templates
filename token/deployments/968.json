@@ -1,0 +1,18 @@
+{
+  "UzoToken": {
+    "contract": "UzoToken",
+    "source": "contracts/UzoToken.sol:UzoToken",
+    "address": "0x052a24B1ECAdea3eb50C71D3c7DA9Ba15318DC46",
+    "chainId": 968,
+    "txHash": "0xd601ba94752856f60dda54453dbd22f13a489416ab58a0a56309602e06fbf9e3",
+    "deployer": "0xe3e5D9f7eD994A6b5f697e60218a29F3Bf98B485",
+    "constructorArgs": [
+      "Uzo Token",
+      "UZO",
+      "1000000000000000000000000",
+      "0xe3e5D9f7eD994A6b5f697e60218a29F3Bf98B485"
+    ],
+    "tool": "hardhat",
+    "deployedAt": "2026-10-01T08:06:46.794Z"
+  }
+}

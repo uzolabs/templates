@@ -1,0 +1,64 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  repo:
+    name: Shared files and template rules
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run format:check
+      - run: npm run sync:check
+      - run: npm run check
+
+  template:
+    name: ${{ matrix.template }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # Add each template here as it lands.
+        template: [token]
+    defaults:
+      run:
+        working-directory: ${{ matrix.template }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            ${{ matrix.template }}/package-lock.json
+            ${{ matrix.template }}/frontend/package-lock.json
+      - uses: foundry-rs/foundry-toolchain@v1
+      - name: Install (also installs frontend/ via postinstall)
+        run: npm ci
+      - run: npm run typecheck
+      - name: Foundry build and test
+        run: |
+          forge build
+          forge test -vv
+      - name: Hardhat build and test
+        run: |
+          npx hardhat build
+          npx hardhat test solidity
+      - name: Frontend ABI is up to date
+        run: |
+          npx tsx scripts/export-abi.ts
+          git diff --exit-code -- frontend/src/abi.ts
+      - name: Frontend build
+        run: npm --prefix frontend run build
